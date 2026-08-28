@@ -1,0 +1,4 @@
+-r requirements.txt
+# Só necessário se SENTINEL_DB_URL apontar para postgresql://... — o
+# backend funciona inteiramente com SQLite (padrão) sem este pacote.
+psycopg2-binary>=2.9

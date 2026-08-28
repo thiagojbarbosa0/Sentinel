@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+*.egg-info/
+
+sentinel.db
+sentinel.db-shm
+sentinel.db-wal
+managed_tmp/
+
+.env
+.DS_Store

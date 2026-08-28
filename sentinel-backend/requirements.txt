@@ -1,0 +1,8 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+psutil>=5.9
+pydantic>=2.6
+scikit-learn>=1.4
+numpy>=1.26
+requests>=2.31
+sqlalchemy>=2.0

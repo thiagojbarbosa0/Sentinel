@@ -1,0 +1,36 @@
+# Monitorar o HOST a partir de um container exige abrir mão de parte do
+# isolamento que o Docker normalmente dá — não tem como contornar isso,
+# é a mesma troca que qualquer agente de observabilidade (node_exporter,
+# Datadog agent, etc.) faz. Documentado aqui em vez de escondido:
+#
+#   pid: host            -> psutil enxerga os processos do host, não só os
+#                            do container (senão "Process Monitor" mostraria
+#                            só o processo do próprio Sentinel)
+#   network_mode: host    -> a sonda de gateway/DNS/internet reflete a rede
+#                            real do host, não a rede virtual do Docker
+#   /hostfs:ro            -> disco do HOST montado read-only; sem isso,
+#                            "uso de disco" mediria o filesystem do
+#                            container (quase sempre ~vazio), não o do host
+#
+# Se você só quer rodar o backend recebendo dados de agentes remotos (via
+# /ingest) sem monitorar a própria máquina onde o container roda, pode
+# remover pid/network_mode/hostfs sem problema — nesse caso o host "local"
+# do container é só mais um host qualquer, não o que você quer observar.
+services:
+  sentinel:
+    build: .
+    container_name: sentinel-backend
+    pid: host
+    network_mode: host
+    volumes:
+      - sentinel-data:/data
+      - /:/hostfs:ro
+    environment:
+      SENTINEL_DISK_PATH: /hostfs
+      SENTINEL_DB: /data/sentinel.db
+      SENTINEL_TEMP_DIR: /data/managed_tmp
+      # SENTINEL_API_KEY: defina antes de expor a porta além de localhost
+    restart: unless-stopped
+
+volumes:
+  sentinel-data:
